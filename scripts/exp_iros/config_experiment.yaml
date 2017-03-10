@@ -1,0 +1,54 @@
+
+experiment_name: exp_iros
+
+templates: 
+  fp_experiment_sh: scripts/templates/experiment.sh.jinja
+  fp_visualize_sh: scripts/templates/visualize.sh.jinja
+  fp_results_sh: scripts/templates/results.sh.jinja
+  fp_cluster_sh: scripts/templates/cluster.sh.jinja
+  fp_cluster_sub: scripts/templates/cluster.sub.jinja
+  fp_config: scripts/exp_iros/config.yaml.jinja
+
+params_combination_setup: &params_combination_setup
+  RANDOM_SEED: [1, 2, 3, 4, 5, 6, 7, 8, 9 , 10]
+  NOISE_SENSING: ['0.0008', '0.0007','0.0005', '0.0001']
+  NOISE_FORWARD_STICTION: [5.0, 8.0]
+  NOISE_FORWARD_FRICTION: [5.0, 8.0]
+  SYS_Q_START: [[0., 0.]]
+  NUM_EPOCHS: [20, 50]
+  LE_ALPHA: [0.1]
+
+experiments:
+
+  doom:
+    exp_type: exp_doom
+
+    params_combination_setup: *params_combination_setup
+
+    params_groups:
+      low:
+        FB_LEARNING_RATE: 0.01
+        LE_LEARNING_RATE: 0.5
+      high:
+        FB_LEARNING_RATE: 0.2
+        LE_LEARNING_RATE: 0.5
+
+
+  pid_traj:
+    exp_type: exp_pid_traj
+    params_combination_setup: *params_combination_setup
+    params_groups:
+      low:
+        FB_P_GAIN: 25.0
+        FB_D_GAIN: 2.5
+        FB_I_GAIN: 0.005
+        LE_P_GAIN: 500.0
+        LE_D_GAIN: 50.0
+        LE_I_GAIN: 0.01
+      high:
+        FB_P_GAIN: 500.0
+        FB_D_GAIN: 50.0
+        FB_I_GAIN: 0.01
+        LE_P_GAIN: 500.0
+        LE_D_GAIN: 50.0
+        LE_I_GAIN: 0.01

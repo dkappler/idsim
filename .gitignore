@@ -1,0 +1,4 @@
+*.pyc
+vpy
+*.egg-info
+logs

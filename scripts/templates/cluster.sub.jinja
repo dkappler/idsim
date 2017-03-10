@@ -1,0 +1,15 @@
+executable = /bin/bash
+arguments = {{cluster_script}} $(PROCESS) 
+error = {{cluster_script}}.$(PROCESS).job.err
+output = {{cluster_script}}.$(PROCESS).job.out
+log = {{cluster_script}}.$(PROCESS).job.log
+request_memory = 5000
+request_cpus = 1
+# We don't want to have long running jobs
+MaxTime = 4600
+periodic_hold = (CurrentTime - JobCurrentStartDate) >= $(MaxTime)
+periodic_hold_reason = "Job runtime exceeded"
+# We don't want to use gpus
+requirements = TARGET.TotalGPUs =?= 0
+queue {{num_experiments}}
+

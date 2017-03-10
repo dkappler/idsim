@@ -1,0 +1,14 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+PROJECT_DIR=${SCRIPT_DIR}/{{PROJECT_DIR}}
+cd ${PROJECT_DIR}
+source "scripts/ubash.sh" || exit 1
+
+
+set -x
+${VPY_BIN} scripts/visualization.py \
+           --fp_config {{FP_CONFIG}} \
+           --exp_type {{EXP_TYPE}} \
+           --traj_q \
+           --traj_tau_feedback \
+           --traj_tau_feedforward

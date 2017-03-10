@@ -1,0 +1,15 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+PROJECT_DIR=${SCRIPT_DIR}/{{PROJECT_DIR}}
+
+source "${PROJECT_DIR}/scripts/ubash.sh" || exit 1
+
+cd ${PROJECT_DIR}
+
+{% for pos, command in commands %}
+if [[ "$1" == "{{pos}}" ]];then
+    set -x
+    bash {{command}}
+    set +x
+fi
+{% endfor %}

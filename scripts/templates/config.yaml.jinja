@@ -1,0 +1,89 @@
+
+dt: &dt 0.001
+
+tmp: &sys_default
+  sys_type: SystemPd
+  sys_dt: *dt
+  sys_p_gain: 100.0
+  sys_d_gain: 10.0
+  sys_q_start: [0., 0.]
+  sys_qd_start: [-1., 0.]
+  sys_q_target: [1., 1.]
+  sys_qd_target: [0., 0.]
+  sys_mass: [5., 5.]
+
+
+sys_ref: &sys_ref
+  <<: *sys_default
+
+sys_act: &sys_act
+  <<: *sys_default
+  sys_mass: [0.5, 0.5]
+
+noise_sensing: &noise_sensing
+  nsen_type: NoiseSensingNormal
+  nsen_noise_scaling: {{NOISE_SENSING}
+
+noise_forward: &noise_forward
+  nfor_type: NoiseForwardBasic
+  nfor_noise_max: 0.0
+  nfor_friction: {{NOISE_FORWARD_FRICTION}
+  nfor_stiction: {{NOISE_FORWARD_STICTION}}
+
+feedback_doom: &feedback_doom
+  fdk_type: FeedbackDoom
+  fdk_offset_forgetting_rate: 1.0
+  fdk_gradient_alpha: 0.9
+  fdk_gradient_forgetting_rate: 1.0
+  fdk_fb_learning_rate: {{FB_LEARNING_RATE}}
+  fdk_le_learning_rate: {{LE_LEARNING_RATE}}
+
+feedback_pid_traj: &feedback_pid_traj
+  fdk_type: FeedbackPidTraj
+  fdk_fb_p_gain: {{FB_P_GAIN}}
+  fdk_fb_d_gain: {{FB_D_GAIN}}
+  fdk_fb_i_gain: {{FB_I_GAIN}}
+  fdk_le_p_gain: {{LE_P_GAIN}}
+  fdk_le_d_gain: {{LE_D_GAIN}}
+  fdk_le_i_gain: {{LE_I_GAIN}}
+
+feedforward_network: &feedforward_network
+  fdf_type: FeedforwardNetwork
+  fdf_layers: [200, 100, 50, 20]
+  fdf_learning_rate: 0.001
+  fdf_num_epochs: 200
+  fdf_log_every_n_steps: 100
+  fdf_batch_size: 64
+  fdf_summary_every_n_steps: 100
+  fdf_random_seed: 1234
+  fdf_use_gpu: false
+
+sim: &sim
+  sim_num_iteration: 1000
+  sim_max_tau_feedforward: 5000
+  sim_max_tau_feedback: 5000
+  sim_max_tau: 5000
+
+exp_data: &exp_data
+  random_seed: 1234
+  sim: *sim
+  sys_ref: *sys_ref
+  sys_act: *sys_act
+  learn_iterations: 10
+
+exp_noise_doom:
+  <<: *exp_data
+  exp_fp_data: logs/{{EXPERIMENT_NAME}}/results_noise_doom.pkl
+  noise_forward: *noise_forward
+  noise_sensing: *noise_sensing
+  feedback: *feedback_doom
+  feedforward: *feedforward_network
+
+exp_noise_pid_traj:
+  <<: *exp_data
+  exp_fp_data: logs/{{EXPERIMENT_NAME}}/results_noise_pid_traj.pkl
+  noise_forward: *noise_forward
+  noise_sensing: *noise_sensing
+  feedback: *feedback_pid_traj
+  feedforward: *feedforward_network
+

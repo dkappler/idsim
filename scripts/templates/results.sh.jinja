@@ -1,0 +1,19 @@
+#!/bin/bash
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+PROJECT_DIR=${SCRIPT_DIR}/{{PROJECT_DIR}}
+cd ${PROJECT_DIR}
+
+source "scripts/ubash.sh" || exit 1
+
+
+set -x
+${VPY_BIN} inverse_dynamics/results.py \
+           --fp_config {{FP_CONFIG}} \
+           --exp_type {{EXP_TYPE}} \
+           --dp_output {{DP_OUTPUT}} \
+           --q \
+           --qdd \
+           --tau_feedback_learning \
+           --tau_feedback_applied \
+           --tau
+
